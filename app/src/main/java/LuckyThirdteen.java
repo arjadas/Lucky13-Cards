@@ -4,12 +4,14 @@ import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
-public class LuckyThirteen extends CardGame {
+public class LuckyThirdteen extends CardGame {
+
 
     final String trumpImage[] = {"bigspade.gif", "bigheart.gif", "bigdiamond.gif", "bigclub.gif"};
 
@@ -30,29 +32,36 @@ public class LuckyThirteen extends CardGame {
     private int thinkingTime = 2000;
     private int delayTime = 600;
 
-    CarkMap carkMap = new CarkMap();
+    public void setStatus(String string) {
+        setStatusText(string);
+    }
 
-    private Player[] players = new Player[carkMap.nbPlayers];
+    CarkMap carkMap=new CarkMap();
+
+    private Player[] players=new Player[carkMap.nbPlayers];
     private boolean isAuto = false;
-    private Hand playingArea; // Holds the two public cards
-    // Shared card pool, used by all four players
-    private Hand pack; // Public card pool
+    private Hand playingArea;
+    private Hand pack;
 
     private Actor[] scoreActors = {null, null, null, null};
 
+
     Font bigFont = new Font("Arial", Font.BOLD, 36);
 
-    private Algorithm algorithm = null;
+    private Algorithm algorithm=null;
 
     private void initScore() {
-        for (int i = 0; i < carkMap.nbPlayers; i++) {
+        for (int i = 0; i <  carkMap.nbPlayers; i++) {
+            // scores[i] = 0;
             String text = "[" + String.valueOf(players[i].getScore()) + "]";
             scoreActors[i] = new TextActor(text, Color.WHITE, bgColor, bigFont);
             addActor(scoreActors[i], carkMap.scoreLocations[i]);
         }
     }
 
-    // Update the score display on the UI
+
+
+
     private void updateScore(int player) {
         removeActor(scoreActors[player]);
         int displayScore = Math.max(players[player].getScore(), 0);
@@ -62,7 +71,8 @@ public class LuckyThirteen extends CardGame {
     }
 
     private void initScores() {
-        for (int i = 0; i < carkMap.nbPlayers; i++) {
+//        Arrays.fill(scores, 0);
+        for(int i=0;i<carkMap.nbPlayers;i++){
             players[i].setScore(0);
         }
     }
@@ -70,51 +80,54 @@ public class LuckyThirteen extends CardGame {
     private Card selected;
 
     private void initGame() {
+//        hands = new Hand[nbPlayers];
+        playingArea = new Hand(deck);
         for (int i = 0; i < carkMap.nbPlayers; i++) {
             players[i].setHand(new Hand(deck));
+            players[i].setPlayingArea(playingArea);
+
         }
-        playingArea = new Hand(deck);
+
         dealingOut(players, carkMap.nbPlayers, carkMap.nbStartCards, carkMap.nbFaceUpCards);
-        // Draw cards to the public area
         playingArea.setView(this, new RowLayout(carkMap.trickLocation, (playingArea.getNumberOfCards() + 2) * carkMap.trickWidth));
         playingArea.draw();
-        // Sort hands
         for (int i = 0; i < carkMap.nbPlayers; i++) {
             players[i].getHand().sort(Hand.SortType.SUITPRIORITY, false);
         }
         // Set up human player for interaction
-        CardListener cardListener = new CardAdapter() {
+        CardListener cardListener = new CardAdapter()  // Human Player plays card
+        {
             public void leftDoubleClicked(Card card) {
-                // For human player (only at position 0), accept double-clicked card
                 selected = card;
                 players[0].getHand().setTouchEnabled(false);
             }
         };
-        // Bind double-click listener
         players[0].getHand().addCardListener(cardListener);
-        // Graphics
+        // graphics
         RowLayout[] layouts = new RowLayout[carkMap.nbPlayers];
-        // Draw each player's cards
         for (int i = 0; i < carkMap.nbPlayers; i++) {
             layouts[i] = new RowLayout(carkMap.handLocations[i], carkMap.handWidth);
             layouts[i].setRotationAngle(90 * i);
+            // layouts[i].setStepDelay(10);
             players[i].getHand().setView(this, layouts[i]);
             players[i].getHand().setTargetArea(new TargetArea(carkMap.trickLocation));
             players[i].getHand().draw();
         }
     }
 
-    // Return random Enum value
+
+    // return random Enum value
     public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
         int x = random.nextInt(clazz.getEnumConstants().length);
         return clazz.getEnumConstants()[x];
     }
 
-    // Return random Card from ArrayList
+    // return random Card from ArrayList
     public static Card randomCard(ArrayList<Card> list) {
         int x = random.nextInt(list.size());
         return list.get(x);
     }
+
 
     private Rank getRankFromString(String cardName) {
         String rankString = cardName.substring(0, cardName.length() - 1);
@@ -131,7 +144,9 @@ public class LuckyThirteen extends CardGame {
 
     private Suit getSuitFromString(String cardName) {
         String rankString = cardName.substring(0, cardName.length() - 1);
-        String suitString = cardName.substring(cardName.length() - 1);
+        String suitString = cardName.substring(cardName.length() - 1, cardName.length());
+        Integer rankValue = Integer.parseInt(rankString);
+
         for (Suit suit : Suit.values()) {
             if (suit.getSuitShortHand().equals(suitString)) {
                 return suit;
@@ -140,14 +155,17 @@ public class LuckyThirteen extends CardGame {
         return Suit.CLUBS;
     }
 
+
     private Card getCardFromList(List<Card> cards, String cardName) {
         Rank cardRank = getRankFromString(cardName);
         Suit cardSuit = getSuitFromString(cardName);
-        for (Card card : cards) {
-            if (card.getSuit() == cardSuit && card.getRank() == cardRank) {
+        for (Card card: cards) {
+            if (card.getSuit() == cardSuit
+                    && card.getRank() == cardRank) {
                 return card;
             }
         }
+
         return null;
     }
 
@@ -172,6 +190,9 @@ public class LuckyThirteen extends CardGame {
             return null;
         }
     }
+
+
+
 
     // Initialize each player's hand with 2 cards and the public area with 2 cards
     private void dealingOut(Player[] players, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards) {
@@ -213,14 +234,14 @@ public class LuckyThirteen extends CardGame {
                 continue;
             }
             String[] initialCards = initialCardsValue.split(",");
-            for (String initialCard : initialCards) {
+            for (String initialCard: initialCards) {
                 if (initialCard.length() <= 1) {
                     continue;
                 }
                 Card card = getCardFromList(pack.getCardList(), initialCard);
                 if (card != null) {
                     card.removeFromHand(false);
-                    players[i].getHand().insert(card, false); // Add drawn card to the player's hand
+                    players[i].getHand().insert(card, false);
                 }
             }
         }
@@ -282,30 +303,41 @@ public class LuckyThirteen extends CardGame {
         logResult.append("Winners:" + String.join(", ", winners.stream().map(String::valueOf).collect(Collectors.toList())));
     }
 
+    public Card getRandomCard(Hand hand) {
+
+        int x = random.nextInt(hand.getCardList().size());
+        return hand.getCardList().get(x);
+    }
+
     private void playGame() {
+        // End trump suit
         int winner = 0;
-        int roundNumber = 1; // Default start from round 1
+        int roundNumber = 1;// Default start from round 1
         for (int i = 0; i < carkMap.nbPlayers; i++) updateScore(i);
 
-        List<Card> cardsPlayed = new ArrayList<>();
+        List<Card>cardsPlayed = new ArrayList<>();
         addRoundInfoToLog(roundNumber);
 
         int nextPlayer = 0;
         // Maximum of 4 rounds
-        while (roundNumber <= 4) {
+        while(roundNumber <= 4) {
             selected = null;
             boolean finishedAuto = false;
             // Auto play according to config file
             if (isAuto) {
+
                 int nextPlayerAutoIndex = players[nextPlayer].getAutoIndexHand();
-                List<String> nextPlayerMovement = players[nextPlayer].getPlayerAutoMovements();
+
+                List<String> nextPlayerMovement =players[nextPlayer].getPlayerAutoMovements();
                 String nextMovement = "";
 
                 if (nextPlayerMovement.size() > nextPlayerAutoIndex) {
+
                     nextMovement = nextPlayerMovement.get(nextPlayerAutoIndex);
                     nextPlayerAutoIndex++;
 
                     players[nextPlayer].setAutoIndexHand(nextPlayerAutoIndex);
+
                     Hand nextHand = players[nextPlayer].getHand();
 
                     // Apply movement for player
@@ -315,7 +347,7 @@ public class LuckyThirteen extends CardGame {
                     if (selected != null) {
                         selected.removeFromHand(true);
                     } else {
-                        selected = algorithm.getRandomCard(players[nextPlayer].getHand());
+                        selected = getRandomCard(players[nextPlayer].getHand());
                         selected.removeFromHand(true);
                     }
                 } else {
@@ -323,11 +355,12 @@ public class LuckyThirteen extends CardGame {
                 }
             }
 
+
             if (!isAuto || finishedAuto) {
                 if (0 == nextPlayer) {
                     players[0].getHand().setTouchEnabled(true);
 
-                    setStatusText("Player 0 is playing. Please double click on a card to discard");
+                    setStatus("Player 0 is playing. Please double click on a card to discard");
                     selected = null;
                     // Draw a card first
                     dealACardToHand(players[0].getHand());
@@ -336,18 +369,12 @@ public class LuckyThirteen extends CardGame {
                     selected.removeFromHand(true);
                 } else {
                     setStatusText("Player " + nextPlayer + " thinking...");
-                    dealACardToHand(players[nextPlayer].getHand());
 
-                    if (players[nextPlayer].getStrType().equals("basic")) {
-                        selected = algorithm.getMinCard(players[nextPlayer].getHand());
-                        selected.removeFromHand(true);
-                    } else if (players[nextPlayer].getStrType().equals("clever")) {
-                        selected = algorithm.getCleverCard(players[nextPlayer].getHand());
-                        selected.removeFromHand(true);
-                    } else {
-                        selected = algorithm.getRandomCard(players[nextPlayer].getHand());
-                        selected.removeFromHand(true);
-                    }
+                    randomSelectCard(players[nextPlayer].getHand());
+
+                    selected = players[nextPlayer].selectRemoveCard();
+                    selected.removeFromHand(true);
+
                 }
             }
 
@@ -355,14 +382,15 @@ public class LuckyThirteen extends CardGame {
 
             if (selected != null) {
                 cardsPlayed.add(selected);
-                selected.setVerso(false); // In case it is upside down
+                selected.setVerso(false);  // In case it is upside down
                 delay(delayTime);
+                // End Follow
             }
 
             nextPlayer = (nextPlayer + 1) % carkMap.nbPlayers;
 
             if (nextPlayer == 0) {
-                roundNumber++;
+                roundNumber ++;
                 addEndOfRoundToLog();
 
                 if (roundNumber <= 4) {
@@ -370,44 +398,47 @@ public class LuckyThirteen extends CardGame {
                 }
             }
             if (roundNumber > 4) {
-                algorithm.calculateScoreEndOfRound(); // Calculate each player's final score
+                algorithm.calculateScoreEndOfRound();//计算每个人的最后得分
             }
             delay(delayTime);
         }
     }
 
     // Randomly draw a card from the card pool
-    private void randomSelectCard(Hand hand) {
+    private void randomSelectCard(Hand hand){
         dealACardToHand(hand);
+
         delay(thinkingTime);
     }
 
-    private void createPlayers() {
+    private  void createPlayers(){
+
         String player0Type = properties.getProperty("players.0");
         String player1Type = properties.getProperty("players.1");
         String player2Type = properties.getProperty("players.2");
         String player3Type = properties.getProperty("players.3");
 
-        if (player0Type == null) {
-            player0Type = "random";
+        if(player0Type==null){
+            player0Type="random";
         }
-        if (player1Type == null) {
-            player1Type = "random";
+        if(player1Type==null){
+            player1Type="random";
         }
-        if (player2Type == null) {
-            player2Type = "random";
+        if(player2Type==null){
+            player2Type="random";
         }
-        if (player3Type == null) {
-            player3Type = "random";
+        if(player3Type==null){
+            player3Type="random";
         }
-        String[] playerTypes = new String[]{player0Type, player1Type, player2Type, player3Type};
+        String[] playerTypes = new String[] {player0Type, player1Type, player2Type, player3Type};
+
 
         String player0AutoMovement = properties.getProperty("players.0.cardsPlayed");
         String player1AutoMovement = properties.getProperty("players.1.cardsPlayed");
         String player2AutoMovement = properties.getProperty("players.2.cardsPlayed");
         String player3AutoMovement = properties.getProperty("players.3.cardsPlayed");
 
-        String[] playerMovements = new String[]{"", "", "", ""};
+        String[] playerMovements = new String[] {"", "", "", ""};
         if (player0AutoMovement != null) {
             playerMovements[0] = player0AutoMovement;
         }
@@ -427,41 +458,49 @@ public class LuckyThirteen extends CardGame {
         for (int i = 0; i < playerMovements.length; i++) {
             String movementString = playerMovements[i];
             if (movementString.equals("")) {
-                Player player = new Player(playerTypes[i], null, 0, new ArrayList<>());
-                players[i] = player;
+                Player player=PlayerFactory.getPlayer(playerTypes[i],null,null,0,new ArrayList<>());   //new Player(playerTypes[i],null,0,new ArrayList<>());
+                players[i]=player;
                 continue;
             }
             List<String> movements = Arrays.asList(movementString.split(","));
-            Player player = new Player(playerTypes[i], null, 0, movements);
-            players[i] = player;
+            Player player= PlayerFactory.getPlayer(playerTypes[i],null,null,0,movements); //new Player(playerTypes[i],null,0,movements);
+            players[i]=player;
+
+
         }
+
     }
+
 
     // Program entry point
     public String runApp() {
         setTitle("LuckyThirteen (V" + version + ") Constructed for UofM SWEN30006 with JGameGrid (www.aplu.ch)");
         setStatusText("Initializing...");
-        createPlayers(); // Create four players, read auto player actions from config file, initialize player types
+        createPlayers();
 
-        initScores(); // Initialize scores, all set to 0
-        initScore(); // Draw the initial scores on the UI
+        initScores();
 
-        initGame(); // Initialize each player's hand with 2 cards, the public area with 2 cards, and draw them to specified positions. Bind double-click card event for the human player
+        initGame();
 
-        algorithm = new Algorithm(players, playingArea); // Initialize algorithm (including 13 calculation and card discard algorithm)
-        playGame(); // Run 4 rounds, each player draws and discards cards (auto players follow config, manual players choose randomly, human players choose by double-clicking). Calculate each player's score at the end
+        if(playingArea==null){
+            System.out.println("playingArea is null");
+        }
+        algorithm=new Algorithm(players,playingArea);
 
-        for (int i = 0; i < carkMap.nbPlayers; i++) updateScore(i); // Update scores on the UI
+        playGame();
+
+        for (int i = 0; i < carkMap.nbPlayers; i++) updateScore(i);
         int maxScore = 0;
-        for (int i = 0; i < carkMap.nbPlayers; i++) if (players[i].getScore() > maxScore) maxScore = players[i].getScore(); // Calculate the highest score among the four players
-        List<Integer> winners = new ArrayList<>();
-        for (int i = 0; i < carkMap.nbPlayers; i++) if (players[i].getScore() == maxScore) winners.add(i); // Record the highest scorers (winners, could be multiple)
+        for (int i = 0; i < carkMap.nbPlayers; i++) if (players[i].getScore() > maxScore) maxScore = players[i].getScore();
+        List<Integer> winners = new ArrayList<Integer>();
+        for (int i = 0; i < carkMap.nbPlayers; i++) if (players[i].getScore() == maxScore) winners.add(i);
         String winText;
-        // Display winners on the bottom left corner
         if (winners.size() == 1) {
-            winText = "Game over. Winner is player: " + winners.iterator().next();
+            winText = "Game over. Winner is player: " +
+                    winners.iterator().next();
         } else {
-            winText = "Game Over. Drawn winners are players: " + String.join(", ", winners.stream().map(String::valueOf).collect(Collectors.toList()));
+            winText = "Game Over. Drawn winners are players: " +
+                    String.join(", ", winners.stream().map(String::valueOf).collect(Collectors.toList()));
         }
         addActor(new Actor("sprites/gameover.gif"), carkMap.textLocation);
         setStatusText(winText);
@@ -471,7 +510,7 @@ public class LuckyThirteen extends CardGame {
         return logResult.toString();
     }
 
-    public LuckyThirteen(Properties properties) {
+    public LuckyThirdteen(Properties properties) {
         super(700, 700, 30);
         this.properties = properties;
         isAuto = Boolean.parseBoolean(properties.getProperty("isAuto"));

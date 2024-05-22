@@ -5,7 +5,7 @@ public class Driver {
 
     public static void main(String[] args) {
         final Properties properties = PropertiesLoader.loadPropertiesFile(DEFAULT_PROPERTIES_PATH);
-        String logResult = new LuckyThirteen(properties).runApp();
+        String logResult = new LuckyThirdteen(properties).runApp();
         System.out.println("logResult = " + logResult);
     }
 

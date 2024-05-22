@@ -1,9 +1,10 @@
+import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Hand;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public abstract class Player {
     private String strType;
     private Hand hand;
 
@@ -14,12 +15,17 @@ public class Player {
     private List<String> playerAutoMovements = new ArrayList<>();
 
 
+    private Hand playingArea;
 
-    Player(String strType,Hand hand,int autoIndexHand,List<String> playerAutoMovements){
+
+    Player(String strType,Hand hand,Hand playingArea,int autoIndexHand,List<String> playerAutoMovements){
         this.setStrType(strType);
         this.setHand(hand);
         this.setAutoIndexHand(autoIndexHand);
         this.setPlayerAutoMovements(playerAutoMovements);
+        this.setPlayingArea(playingArea);
+
+
     }
 
 
@@ -62,4 +68,14 @@ public class Player {
     public void setPlayerAutoMovements(List<String> playerAutoMovements) {
         this.playerAutoMovements = playerAutoMovements;
     }
+
+    public Hand getPlayingArea() {
+        return playingArea;
+    }
+
+    public void setPlayingArea(Hand playingArea) {
+        this.playingArea = playingArea;
+    }
+
+    public abstract Card selectRemoveCard();
 }
