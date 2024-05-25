@@ -1,10 +1,6 @@
-import ch.aplu.jgamegrid.Actor;
 import ch.aplu.jgamegrid.Location;
-import ch.aplu.jgamegrid.TextActor;
 
-import java.awt.*;
-
-public class CarkMap {
+public class CardMap {
 
     public final int nbPlayers = 4;
 

@@ -10,15 +10,16 @@ import java.util.Random;
 public class Algorithm {
 
     private static final int THIRTEEN_GOAL = 13;
-    private Player[] players=null;
+    private Player[] players = null;
     private Hand playingArea;// Stores the two public cards
 
-    public Algorithm(Hand playingArea){
-        this.playingArea=playingArea;
+    public Algorithm(Hand playingArea) {
+        this.playingArea = playingArea;
     }
-    public Algorithm(Player[] players,Hand playingArea){
-        this.players=players;
-        this.playingArea=playingArea;
+
+    public Algorithm(Player[] players, Hand playingArea) {
+        this.players = players;
+        this.playingArea = playingArea;
     }
 
     public void calculateScoreEndOfRound() {
@@ -37,12 +38,11 @@ public class Algorithm {
 
         if (countTrue == 1) { // Only one player equals 13
             int winnerIndex = indexesWithThirteen.get(0); // Get the index of that player
-            players[winnerIndex].setScore(100) ;// Record score as 100
+            players[winnerIndex].setScore(100);// Record score as 100
         } else if (countTrue > 1) {// Multiple players equal 13
             for (Integer thirteenIndex : indexesWithThirteen) {
                 players[thirteenIndex].setScore(calculateMaxScoreForThirteenPlayer(thirteenIndex));
             }
-
         } else {// No player equals 13, only calculate the score of two private cards
             for (int i = 0; i < players.length; i++) {
                 players[i].setScore(getScorePrivateCard(players[i].getHand().getCardList().get(0)) +
@@ -99,7 +99,7 @@ public class Algorithm {
             }
         }
 
-        if(isThirteenCards(privateCard2, publicCard2)) {
+        if (isThirteenCards(privateCard2, publicCard2)) {
             int score = getScorePrivateCard(privateCard2) + getScorePublicCard(publicCard2);
             if (maxScore < score) {
                 maxScore = score;
@@ -107,10 +107,10 @@ public class Algorithm {
         }
 
         // Check if the sum of four cards equals 13, and if so, compare this score with the maximum score
-        if(isThirteenCards(privateCard1,privateCard2, publicCard1, publicCard2)) {
-            System.out.println("四张牌之和等于13");
-            int score =getScorePrivateCard(privateCard1) + getScorePrivateCard(privateCard2) +getScorePublicCard(publicCard1)+ getScorePublicCard(publicCard2);
-            System.out.println("score="+score);
+        if (isThirteenCards(privateCard1, privateCard2, publicCard1, publicCard2)) {
+            System.out.println("sum of four cards equal 13");
+            int score = getScorePrivateCard(privateCard1) + getScorePrivateCard(privateCard2) + getScorePublicCard(publicCard1) + getScorePublicCard(publicCard2);
+            System.out.println("score=" + score);
             if (maxScore < score) {
                 maxScore = score;
             }
@@ -118,6 +118,7 @@ public class Algorithm {
 
         return maxScore;
     }
+
     // Calculate the actual score based on the suit
     private int getScorePrivateCard(Card card) {
         Rank rank = (Rank) card.getRank();
@@ -132,7 +133,8 @@ public class Algorithm {
         Rank rank2 = (Rank) card2.getRank();
         return isThirteenFromPossibleValues(rank1.getPossibleSumValues(), rank2.getPossibleSumValues());
     }
-    public boolean isThirteenCards(Card card1, Card card2,Card card3, Card card4) {
+
+    public boolean isThirteenCards(Card card1, Card card2, Card card3, Card card4) {
         Rank rank1 = (Rank) card1.getRank();
         Rank rank2 = (Rank) card2.getRank();
         Rank rank3 = (Rank) card3.getRank();
@@ -173,12 +175,13 @@ public class Algorithm {
         return false;
     }
 
-    private boolean isThirteenFromPossibleValues(int[] possibleValues1, int[] possibleValues2, int[] possibleValues3, int[] possibleValues4) {
+    private boolean isThirteenFromPossibleValues(int[] possibleValues1, int[] possibleValues2,
+                                                 int[] possibleValues3, int[] possibleValues4) {
         for (int value1 : possibleValues1) {
             for (int value2 : possibleValues2) {
                 for (int value3 : possibleValues3) {
                     for (int value4 : possibleValues4) {
-                        if (value1 + value2+value3+value4== THIRTEEN_GOAL) {
+                        if (value1 + value2 + value3 + value4 == THIRTEEN_GOAL) {
                             return true;
                         }
                     }
