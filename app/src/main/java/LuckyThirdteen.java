@@ -50,9 +50,12 @@ public class LuckyThirdteen extends CardGame {
 
     private Algorithm algorithm=null;
 
+    /**
+     * Method which sets up new players with a score of 0
+     */
     private void initScore() {
         for (int i = 0; i <  carkMap.nbPlayers; i++) {
-            // scores[i] = 0;
+            players[i].setScore(0);
             String text = "[" + String.valueOf(players[i].getScore()) + "]";
             scoreActors[i] = new TextActor(text, Color.WHITE, bgColor, bigFont);
             addActor(scoreActors[i], carkMap.scoreLocations[i]);
@@ -63,15 +66,18 @@ public class LuckyThirdteen extends CardGame {
 
 
     private void updateScore(int player) {
-        removeActor(scoreActors[player]);
+        //removeActor(scoreActors[player]);
         int displayScore = Math.max(players[player].getScore(), 0);
         String text = "P" + player + "[" + String.valueOf(displayScore) + "]";
         scoreActors[player] = new TextActor(text, Color.WHITE, bgColor, bigFont);
         addActor(scoreActors[player], carkMap.scoreLocations[player]);
     }
 
+    /**
+     * Method to reset scores of players to 0
+     */
     private void initScores() {
-//        Arrays.fill(scores, 0);
+        // Arrays.fill(scores, 0);
         for(int i=0;i<carkMap.nbPlayers;i++){
             players[i].setScore(0);
         }
@@ -398,7 +404,7 @@ public class LuckyThirdteen extends CardGame {
                 }
             }
             if (roundNumber > 4) {
-                algorithm.calculateScoreEndOfRound();//计算每个人的最后得分
+                algorithm.calculateScoreEndOfRound();// calculate everyone's final score
             }
             delay(delayTime);
         }
@@ -476,9 +482,10 @@ public class LuckyThirdteen extends CardGame {
     public String runApp() {
         setTitle("LuckyThirteen (V" + version + ") Constructed for UofM SWEN30006 with JGameGrid (www.aplu.ch)");
         setStatusText("Initializing...");
+
         createPlayers();
 
-        initScores();
+        initScore();
 
         initGame();
 

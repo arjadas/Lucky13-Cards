@@ -34,7 +34,7 @@ public class Algorithm {
             }
         }
         long countTrue = indexesWithThirteen.size();// Number of players who equal 13
-        ;
+
         if (countTrue == 1) { // Only one player equals 13
             int winnerIndex = indexesWithThirteen.get(0); // Get the index of that player
             players[winnerIndex].setScore(100) ;// Record score as 100
