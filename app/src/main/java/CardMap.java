@@ -1,3 +1,4 @@
+
 import ch.aplu.jgamegrid.Location;
 
 public class CardMap {

@@ -1,5 +1,3 @@
-// LuckyThirteen.java
-
 import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;
 
@@ -12,16 +10,12 @@ import java.util.stream.Collectors;
 public class LuckyThirdteen extends CardGame {
 
 
-    final String trumpImage[] = {"bigspade.gif", "bigheart.gif", "bigdiamond.gif", "bigclub.gif"};
 
     static public final int seed = 30008;
     static final Random random = new Random(seed);
     private Properties properties;
     private StringBuilder logResult = new StringBuilder();
 
-    public boolean rankGreater(Card card1, Card card2) {
-        return card1.getRankId() < card2.getRankId(); // Warning: Reverse rank order of cards (see comment on enum)
-    }
 
     private final String version = "1.0";
 
@@ -73,17 +67,11 @@ public class LuckyThirdteen extends CardGame {
     /**
      * Method to reset scores of players to 0
      */
-    private void initScores() {
-        // Arrays.fill(scores, 0);
-        for (int i = 0; i < cardMap.nbPlayers; i++) {
-            players[i].setScore(0);
-        }
-    }
 
     private Card selected;
 
     private void initGame() {
-//        hands = new Hand[nbPlayers];
+
         playingArea = new Hand(deck);
         for (int i = 0; i < cardMap.nbPlayers; i++) {
             players[i].setHand(new Hand(deck));
@@ -121,10 +109,7 @@ public class LuckyThirdteen extends CardGame {
 
 
     // return random Enum value
-    public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
-        int x = random.nextInt(clazz.getEnumConstants().length);
-        return clazz.getEnumConstants()[x];
-    }
+
 
     // return random Card from ArrayList
     public static Card randomCard(ArrayList<Card> list) {
@@ -376,7 +361,6 @@ public class LuckyThirdteen extends CardGame {
 
                     selected = players[nextPlayer].selectRemoveCard();
                     selected.removeFromHand(true);
-
                 }
             }
 
