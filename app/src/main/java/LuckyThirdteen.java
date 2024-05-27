@@ -14,7 +14,7 @@ public class LuckyThirdteen extends CardGame {
     static public final int seed = 30008;
     static final Random random = new Random(seed);
     private Properties properties;
-    private StringBuilder logResult = new StringBuilder();
+    private LogData logInfo = new LogData();
 
 
     private final String version = "1.0";
@@ -128,7 +128,6 @@ public class LuckyThirdteen extends CardGame {
         }
     }
 
-
     // Initialize each player's hand with 2 cards and the public area with 2 cards
     private void dealingOut(Player[] players, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards) {
         pack = deck.toHand(false);
@@ -200,45 +199,6 @@ public class LuckyThirdteen extends CardGame {
         hand.insert(dealt, true);
     }
 
-    private void addCardPlayedToLog(int player, List<Card> cards) {
-        if (cards.size() < 2) {
-            return;
-        }
-        logResult.append("P" + player + "-");
-
-        for (int i = 0; i < cards.size(); i++) {
-            Rank cardRank = (Rank) cards.get(i).getRank();
-            Suit cardSuit = (Suit) cards.get(i).getSuit();
-            logResult.append(cardRank.getRankCardLog() + cardSuit.getSuitShortHand());
-            if (i < cards.size() - 1) {
-                logResult.append("-");
-            }
-        }
-        logResult.append(",");
-    }
-
-    private void addRoundInfoToLog(int roundNumber) {
-        logResult.append("Round" + roundNumber + ":");
-    }
-
-    private void addEndOfRoundToLog() {
-        logResult.append("Score:");
-        for (int i = 0; i < players.length; i++) {
-            logResult.append(players[i].getScore() + ",");
-        }
-        logResult.append("\n");
-    }
-
-    private void addEndOfGameToLog(List<Integer> winners) {
-        logResult.append("EndGame:");
-        for (int i = 0; i < players.length; i++) {
-            logResult.append(players[i].getScore() + ",");
-        }
-        logResult.append("\n");
-        logResult.append("Winners:" + String.join(", ",
-                winners.stream().map(String::valueOf).collect(Collectors.toList())));
-    }
-
     private void playGame() {
         // End trump suit
         int winner = 0;
@@ -246,7 +206,7 @@ public class LuckyThirdteen extends CardGame {
         for (int i = 0; i < cardMap.nbPlayers; i++) updateScore(i);
 
         List<Card> cardsPlayed = new ArrayList<>();
-        addRoundInfoToLog(roundNumber);
+        logInfo.addRoundInfoToLog(roundNumber);
 
         int nextPlayer = 0;
         // Maximum of 4 rounds
@@ -285,7 +245,6 @@ public class LuckyThirdteen extends CardGame {
                 }
             }
 
-
             if (!isAuto || finishedAuto) {
                 if (0 == nextPlayer) {
                     players[0].getHand().setTouchEnabled(true);
@@ -307,7 +266,7 @@ public class LuckyThirdteen extends CardGame {
                 }
             }
 
-            addCardPlayedToLog(nextPlayer, players[nextPlayer].getHand().getCardList());
+            logInfo.addCardPlayedToLog(nextPlayer, players[nextPlayer].getHand().getCardList());
 
             if (selected != null) {
                 cardsPlayed.add(selected);
@@ -320,10 +279,10 @@ public class LuckyThirdteen extends CardGame {
 
             if (nextPlayer == 0) {
                 roundNumber++;
-                addEndOfRoundToLog();
+                logInfo.addEndOfRoundToLog(players);
 
                 if (roundNumber <= 4) {
-                    addRoundInfoToLog(roundNumber);
+                    logInfo.addRoundInfoToLog(roundNumber);
                 }
             }
             if (roundNumber > 4) {
@@ -395,11 +354,8 @@ public class LuckyThirdteen extends CardGame {
             Player player = PlayerFactory.getPlayer(playerTypes[i], null, null, 0, movements); //new Player(playerTypes[i],null,0,movements);
             players[i] = player;
 
-
         }
-
     }
-
 
     // Program entry point
     public String runApp() {
@@ -435,9 +391,11 @@ public class LuckyThirdteen extends CardGame {
         addActor(new Actor("sprites/gameover.gif"), cardMap.textLocation);
         setStatusText(winText);
         refresh();
-        addEndOfGameToLog(winners);
 
-        return logResult.toString();
+        logInfo.addEndOfGameToLog(winners, players);
+
+        return logInfo.getLogResult().toString();
+
     }
 
     public LuckyThirdteen(Properties properties) {
