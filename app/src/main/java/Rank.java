@@ -17,6 +17,7 @@ public enum Rank {
     private int rankCardValue = 1;
     private int scoreValue = 0;
     private int []possibleSumValues = null;
+
     Rank(int rankCardValue, int scoreValue, int... possibleSumValues) {
         this.rankCardValue = rankCardValue;
         this.scoreValue = scoreValue;

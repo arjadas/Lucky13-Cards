@@ -9,18 +9,26 @@ import java.util.stream.Collectors;
 @SuppressWarnings("serial")
 public class LuckyThirdteen extends CardGame {
 
-    static public final int seed = 30008;
-    static final Random random = new Random(seed);
     private Properties properties;
     private LogData logInfo = new LogData();
-
     private final String version = "1.0";
-
-    // Generate 52 playing cards
-    public static final Deck deck = new Deck(Suit.values(), Rank.values(), "cover");
-
+    public static final Deck deck = new Deck(Suit.values(), Rank.values(), "cover"); // 52 playing cards created
     private static int thinkingTime = 2000;
     private static int delayTime = 600;
+
+    private static CardMap cardMap = new CardMap();
+    private PlayerFactory playerFactory = new PlayerFactory();
+    private CardManager cardManager = new CardManager();
+    private Card selected;
+
+    private static Player[] players = new Player[cardMap.nbPlayers];
+    private boolean isAuto = false;
+    private Hand playingArea;
+    private Hand pack = LuckyThirdteen.deck.toHand(false);;
+    private Actor[] scoreActors = {null, null, null, null};
+    Font bigFont = new Font("Arial", Font.BOLD, 36);
+    private Algorithm algorithm = null;
+
 
     public LuckyThirdteen(Properties properties) {
         super(700, 700, 30);
@@ -29,8 +37,6 @@ public class LuckyThirdteen extends CardGame {
         thinkingTime = Integer.parseInt(properties.getProperty("thinkingTime", "200"));
         delayTime = Integer.parseInt(properties.getProperty("delayTime", "50"));
     }
-
-    PlayerFactory playerFactory = new PlayerFactory();
 
     public static int getThinkingTime() {
         return thinkingTime;
@@ -43,21 +49,6 @@ public class LuckyThirdteen extends CardGame {
     public void setStatus(String string) {
         setStatusText(string);
     }
-
-    private static CardMap cardMap = new CardMap();
-
-    private static Player[] players = new Player[cardMap.nbPlayers];
-    private boolean isAuto = false;
-    private Hand playingArea;
-    private Hand pack = LuckyThirdteen.deck.toHand(false);;
-
-    private Actor[] scoreActors = {null, null, null, null};
-
-    Font bigFont = new Font("Arial", Font.BOLD, 36);
-
-    private Algorithm algorithm = null;
-
-    CardManager cardManager = new CardManager();
 
     /**
      * Method which sets up new players with a score of 0
@@ -79,8 +70,6 @@ public class LuckyThirdteen extends CardGame {
         addActor(scoreActors[player], cardMap.scoreLocations[player]);
     }
 
-    private Card selected;
-
     private void initGame() {
 
         playingArea = new Hand(deck);
@@ -90,7 +79,9 @@ public class LuckyThirdteen extends CardGame {
 
         }
 
-        cardManager.dealingOut(players, cardMap.nbPlayers, cardMap.nbStartCards, cardMap.nbFaceUpCards, playingArea, properties, pack);
+        cardManager.dealingOut(players, cardMap.nbPlayers, cardMap.nbStartCards,
+                cardMap.nbFaceUpCards, playingArea, properties, pack);
+
         playingArea.setView(this, new RowLayout(cardMap.trickLocation,
                 (playingArea.getNumberOfCards() + 2) * cardMap.trickWidth));
         playingArea.draw();
@@ -117,9 +108,6 @@ public class LuckyThirdteen extends CardGame {
             players[i].getHand().draw();
         }
     }
-
-
-    // return random Enum value
 
     // Draw a card from the public card pool and place it in the hand, selecting the card to be discarded
     private Card applyAutoMovement(Hand hand, String nextMovement) {
@@ -178,12 +166,8 @@ public class LuckyThirdteen extends CardGame {
                     selected = applyAutoMovement(nextHand, nextMovement);
                     delay(delayTime);
 
-                    if (selected != null) {
-                        selected.removeFromHand(true);
-                    } else {
-                        //selected = cardManager.getRandomCard(players[nextPlayer].getHand());
-                        //selected.removeFromHand(true);
-                    }
+                    selected.removeFromHand(true);
+
                 } else {
                     finishedAuto = true;
                 }
@@ -244,8 +228,8 @@ public class LuckyThirdteen extends CardGame {
         playerFactory.createPlayers(properties);
 
         initGame();
-        initScore();
 
+        initScore();
 
         if (playingArea == null) {
             System.out.println("playingArea is null");

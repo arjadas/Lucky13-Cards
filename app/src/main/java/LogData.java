@@ -46,7 +46,8 @@ public class LogData {
             logResult.append(players[i].getScore() + ",");
         }
         logResult.append("\n");
-        logResult.append("Winners:" + String.join(", ", winners.stream().map(String::valueOf).collect(Collectors.toList())));
+        logResult.append("Winners:" + String.join(", ",
+                winners.stream().map(String::valueOf).collect(Collectors.toList())));
     }
 
     public StringBuilder getLogResult(){

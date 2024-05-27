@@ -1,13 +1,10 @@
 import ch.aplu.jcardgame.Card;
-import ch.aplu.jcardgame.Deck;
 import ch.aplu.jcardgame.Hand;
-import ch.aplu.jgamegrid.*;
 
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static ch.aplu.jgamegrid.GameGrid.delay;
 
@@ -16,8 +13,6 @@ public class CardManager {
     public static final int seed = 30008;
     private static final Random random = new Random(seed);
     private Hand pack;
-    //private Properties properties;
-    private Hand playingArea;
 
 
     // return random Card from ArrayList
@@ -73,7 +68,8 @@ public class CardManager {
     }
 
     // Initialize each player's hand with 2 cards and the public area with 2 cards
-    public void dealingOut(Player[] players, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards, Hand playingArea, Properties properties, Hand pack) {
+    public void dealingOut(Player[] players, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards,
+                           Hand playingArea, Properties properties, Hand pack) {
         // Read public cards from config file
         String initialShareKey = "shared.initialcards";
         String initialShareValue = properties.getProperty(initialShareKey);

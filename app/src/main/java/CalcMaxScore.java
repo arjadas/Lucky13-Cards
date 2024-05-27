@@ -48,12 +48,14 @@ public class CalcMaxScore {
         // Check all combinations of three cards
 
         if (calc13.isThirteenCards(privateCard1, publicCard1, publicCard2)) {
-            int score = getScorePrivateCard(privateCard1) + getScorePublicCard(publicCard1) + getScorePublicCard(publicCard2);
+            int score = getScorePrivateCard(privateCard1) +
+                    getScorePublicCard(publicCard1) + getScorePublicCard(publicCard2);
             maxScore = Math.max(maxScore, score);
         }
 
         if (calc13.isThirteenCards(privateCard2, publicCard1, publicCard2)) {
-            int score = getScorePrivateCard(privateCard2) + getScorePublicCard(publicCard1) + getScorePublicCard(publicCard2);
+            int score = getScorePrivateCard(privateCard2)
+                    + getScorePublicCard(publicCard1) + getScorePublicCard(publicCard2);
             maxScore = Math.max(maxScore, score);
         }
 

@@ -57,12 +57,12 @@ public class PlayerFactory {
         for (int i = 0; i < playerMovements.length; i++) {
             String movementString = playerMovements[i];
             if (movementString.equals("")) {
-                Player player = getPlayer(playerTypes[i], null, null, 0, new ArrayList<>());   //new Player(playerTypes[i],null,0,new ArrayList<>());
+                Player player = getPlayer(playerTypes[i], null, null, 0, new ArrayList<>());
                 players[i] = player;
                 continue;
             }
             List<String> movements = Arrays.asList(movementString.split(","));
-            Player player = getPlayer(playerTypes[i], null, null, 0, movements); //new Player(playerTypes[i],null,0,movements);
+            Player player = getPlayer(playerTypes[i], null, null, 0, movements);
             players[i] = player;
 
         }
@@ -70,7 +70,8 @@ public class PlayerFactory {
 
 
 
-    private Player getPlayer(String strType, Hand hand,Hand playingArea, int autoIndexHand, List<String> playerAutoMovements){
+    private Player getPlayer(String strType, Hand hand,Hand playingArea, int autoIndexHand,
+                             List<String> playerAutoMovements){
 
         if(strType.equals("basic")){
             return new BasicPlayer(strType,hand,playingArea,autoIndexHand,playerAutoMovements);
