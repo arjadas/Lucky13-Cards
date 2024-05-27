@@ -11,12 +11,13 @@ public class PlayerFactory {
     private Player[] players = LuckyThirdteen.getPlayers();
 
     public void createPlayers(Properties properties) {
-
+        // create players with their type
         String player0Type = properties.getProperty("players.0");
         String player1Type = properties.getProperty("players.1");
         String player2Type = properties.getProperty("players.2");
         String player3Type = properties.getProperty("players.3");
 
+        // default to random player if no specified one
         if (player0Type == null) {
             player0Type = "random";
         }
@@ -31,7 +32,7 @@ public class PlayerFactory {
         }
         String[] playerTypes = new String[]{player0Type, player1Type, player2Type, player3Type};
 
-
+        // assign player movements
         String player0AutoMovement = properties.getProperty("players.0.cardsPlayed");
         String player1AutoMovement = properties.getProperty("players.1.cardsPlayed");
         String player2AutoMovement = properties.getProperty("players.2.cardsPlayed");
@@ -69,7 +70,7 @@ public class PlayerFactory {
     }
 
 
-
+    // return player based on specified type
     private Player getPlayer(String strType, Hand hand,Hand playingArea, int autoIndexHand,
                              List<String> playerAutoMovements){
 
