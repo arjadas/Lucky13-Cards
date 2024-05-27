@@ -1,29 +1,32 @@
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
 import ch.aplu.jcardgame.Hand;
+import ch.aplu.jgamegrid.*;
 
+import java.util.Properties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static ch.aplu.jgamegrid.GameGrid.delay;
+
 public class CardManager {
 
     public static final int seed = 30008;
     private static final Random random = new Random(seed);
+    private Hand pack;
+    //private Properties properties;
+    private Hand playingArea;
+
 
     // return random Card from ArrayList
-    public static Card randomCard(ArrayList<Card> list) {
+    public Card randomCard(ArrayList<Card> list) {
         int x = random.nextInt(list.size());
         return list.get(x);
     }
 
-    public static Card getRandomCard(Hand hand) {
-        int x = random.nextInt(hand.getCardList().size());
-        return hand.getCardList().get(x);
-    }
-
-    public static Card getCardFromList(List<Card> cards, String cardName) {
+    public Card getCardFromList(List<Card> cards, String cardName) {
         Rank cardRank = getRankFromString(cardName);
         Suit cardSuit = getSuitFromString(cardName);
         for (Card card: cards) {
@@ -35,7 +38,7 @@ public class CardManager {
         return null;
     }
 
-    private static Rank getRankFromString(String cardName) {
+    private Rank getRankFromString(String cardName) {
         String rankString = cardName.substring(0, cardName.length() - 1);
         Integer rankValue = Integer.parseInt(rankString);
 
@@ -48,7 +51,7 @@ public class CardManager {
         return Rank.ACE;
     }
 
-    private static Suit getSuitFromString(String cardName) {
+    private Suit getSuitFromString(String cardName) {
         String rankString = cardName.substring(0, cardName.length() - 1);
         String suitString = cardName.substring(cardName.length() - 1, cardName.length());
         Integer rankValue = Integer.parseInt(rankString);
@@ -62,11 +65,81 @@ public class CardManager {
     }
 
     // Implement card drawing logic, moving cards from the public pool to the player's hand
-    public static void dealACardToHand(Hand hand, Hand pack) {
+    public void dealACardToHand(Hand hand, Hand pack) {
         if (pack.isEmpty()) return;
-        Card dealt = CardManager.randomCard(pack.getCardList());
+        Card dealt = randomCard(pack.getCardList());
         dealt.removeFromHand(false);
         hand.insert(dealt, true);
+    }
+
+    // Initialize each player's hand with 2 cards and the public area with 2 cards
+    public void dealingOut(Player[] players, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards, Hand playingArea, Properties properties, Hand pack) {
+        // Read public cards from config file
+        String initialShareKey = "shared.initialcards";
+        String initialShareValue = properties.getProperty(initialShareKey);
+        if (initialShareValue != null) {
+            String[] initialCards = initialShareValue.split(",");
+            for (String initialCard : initialCards) {
+                if (initialCard.length() <= 1) {
+                    continue;
+                }
+                // Draw a card from the public card pool
+                Card card = getCardFromList(pack.getCardList(), initialCard);
+                if (card != null) {
+                    card.removeFromHand(true);
+                    // Insert into the public area
+                    playingArea.insert(card, true);
+                }
+            }
+        }
+
+        int cardsToShare = nbSharedCards - playingArea.getNumberOfCards();
+
+        for (int j = 0; j < cardsToShare; j++) {
+            if (pack.isEmpty()) return;
+            // Randomly draw a card from the public card pool
+            Card dealt = randomCard(pack.getCardList());
+            dealt.removeFromHand(true);
+            // Insert into the public area
+            playingArea.insert(dealt, true);
+        }
+
+        // Initialize each player's hand with two cards
+        for (int i = 0; i < nbPlayers; i++) {
+            String initialCardsKey = "players." + i + ".initialcards";
+            String initialCardsValue = properties.getProperty(initialCardsKey);
+            if (initialCardsValue == null) {
+                continue;
+            }
+            String[] initialCards = initialCardsValue.split(",");
+            for (String initialCard : initialCards) {
+                if (initialCard.length() <= 1) {
+                    continue;
+                }
+                Card card = getCardFromList(pack.getCardList(), initialCard);
+                if (card != null) {
+                    card.removeFromHand(false);
+                    players[i].getHand().insert(card, false);
+                }
+            }
+        }
+        // If config file is insufficient, randomly draw cards to ensure each player starts with two cards
+        for (int i = 0; i < nbPlayers; i++) {
+            int cardsToDealt = nbCardsPerPlayer - players[i].getHand().getNumberOfCards();
+            for (int j = 0; j < cardsToDealt; j++) {
+                if (pack.isEmpty()) return;
+                Card dealt = randomCard(pack.getCardList());
+                dealt.removeFromHand(false);
+                players[i].getHand().insert(dealt, false);
+            }
+        }
+    }
+
+    // Randomly draw a card from the card pool
+    public void randomSelectCard(Hand hand) {
+        dealACardToHand(hand, pack);
+
+        delay(LuckyThirdteen.getThinkingTime());
     }
 
 }
