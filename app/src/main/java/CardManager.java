@@ -61,5 +61,12 @@ public class CardManager {
         return Suit.CLUBS;
     }
 
+    // Implement card drawing logic, moving cards from the public pool to the player's hand
+    public static void dealACardToHand(Hand hand, Hand pack) {
+        if (pack.isEmpty()) return;
+        Card dealt = CardManager.randomCard(pack.getCardList());
+        dealt.removeFromHand(false);
+        hand.insert(dealt, true);
+    }
 
 }

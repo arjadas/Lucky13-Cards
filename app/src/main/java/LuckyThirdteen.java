@@ -16,7 +16,6 @@ public class LuckyThirdteen extends CardGame {
     private Properties properties;
     private LogData logInfo = new LogData();
 
-
     private final String version = "1.0";
 
     // Generate 52 playing cards
@@ -38,7 +37,6 @@ public class LuckyThirdteen extends CardGame {
 
     private Actor[] scoreActors = {null, null, null, null};
 
-
     Font bigFont = new Font("Arial", Font.BOLD, 36);
 
     private Algorithm algorithm = null;
@@ -54,7 +52,6 @@ public class LuckyThirdteen extends CardGame {
             addActor(scoreActors[i], cardMap.scoreLocations[i]);
         }
     }
-
 
     private void updateScore(int player) {
         //removeActor(scoreActors[player]);
@@ -149,6 +146,7 @@ public class LuckyThirdteen extends CardGame {
                 }
             }
         }
+
         int cardsToShare = nbSharedCards - playingArea.getNumberOfCards();
 
         for (int j = 0; j < cardsToShare; j++) {
@@ -189,14 +187,6 @@ public class LuckyThirdteen extends CardGame {
                 players[i].getHand().insert(dealt, false);
             }
         }
-    }
-
-    // Implement card drawing logic, moving cards from the public pool to the player's hand
-    private void dealACardToHand(Hand hand) {
-        if (pack.isEmpty()) return;
-        Card dealt = CardManager.randomCard(pack.getCardList());
-        dealt.removeFromHand(false);
-        hand.insert(dealt, true);
     }
 
     private void playGame() {
@@ -252,7 +242,7 @@ public class LuckyThirdteen extends CardGame {
                     setStatus("Player 0 is playing. Please double click on a card to discard");
                     selected = null;
                     // Draw a card first
-                    dealACardToHand(players[0].getHand());
+                    CardManager.dealACardToHand(players[0].getHand(), pack);
                     // Wait for user to double click to select a card
                     while (null == selected) delay(delayTime);
                     selected.removeFromHand(true);
@@ -294,7 +284,7 @@ public class LuckyThirdteen extends CardGame {
 
     // Randomly draw a card from the card pool
     private void randomSelectCard(Hand hand) {
-        dealACardToHand(hand);
+        CardManager.dealACardToHand(hand, pack);
 
         delay(thinkingTime);
     }

@@ -27,7 +27,9 @@ public enum Rank {
         return rankCardValue;
     }
 
-    public int getScoreCardValue() { return scoreValue; }
+    public int getScoreCardValue() {
+        return scoreValue;
+    }
 
     public int[] getPossibleSumValues() {
         return possibleSumValues;
