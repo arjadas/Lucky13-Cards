@@ -64,10 +64,6 @@ public class LuckyThirdteen extends CardGame {
         addActor(scoreActors[player], cardMap.scoreLocations[player]);
     }
 
-    /**
-     * Method to reset scores of players to 0
-     */
-
     private Card selected;
 
     private void initGame() {
@@ -110,60 +106,13 @@ public class LuckyThirdteen extends CardGame {
 
     // return random Enum value
 
-
-    // return random Card from ArrayList
-    public static Card randomCard(ArrayList<Card> list) {
-        int x = random.nextInt(list.size());
-        return list.get(x);
-    }
-
-
-    private Rank getRankFromString(String cardName) {
-        String rankString = cardName.substring(0, cardName.length() - 1);
-        Integer rankValue = Integer.parseInt(rankString);
-
-        for (Rank rank : Rank.values()) {
-            if (rank.getRankCardValue() == rankValue) {
-                return rank;
-            }
-        }
-
-        return Rank.ACE;
-    }
-
-    private Suit getSuitFromString(String cardName) {
-        String rankString = cardName.substring(0, cardName.length() - 1);
-        String suitString = cardName.substring(cardName.length() - 1, cardName.length());
-        Integer rankValue = Integer.parseInt(rankString);
-
-        for (Suit suit : Suit.values()) {
-            if (suit.getSuitShortHand().equals(suitString)) {
-                return suit;
-            }
-        }
-        return Suit.CLUBS;
-    }
-
-
-    private Card getCardFromList(List<Card> cards, String cardName) {
-        Rank cardRank = getRankFromString(cardName);
-        Suit cardSuit = getSuitFromString(cardName);
-        for (Card card : cards) {
-            if (card.getSuit() == cardSuit && card.getRank() == cardRank) {
-                return card;
-            }
-        }
-
-        return null;
-    }
-
     // Draw a card from the public card pool and place it in the hand, selecting the card to be discarded
     private Card applyAutoMovement(Hand hand, String nextMovement) {
         if (pack.isEmpty()) return null;
         String[] cardStrings = nextMovement.split("-");
         String cardDealtString = cardStrings[0];
         // Select card
-        Card dealt = getCardFromList(pack.getCardList(), cardDealtString);
+        Card dealt = CardManager.getCardFromList(pack.getCardList(), cardDealtString);
         if (dealt != null) {
             dealt.removeFromHand(false);
             hand.insert(dealt, true);
@@ -173,7 +122,7 @@ public class LuckyThirdteen extends CardGame {
         // Prepare to discard card
         if (cardStrings.length > 1) {
             String cardDiscardString = cardStrings[1];
-            return getCardFromList(hand.getCardList(), cardDiscardString);
+            return CardManager.getCardFromList(hand.getCardList(), cardDiscardString);
         } else {
             return null;
         }
@@ -193,7 +142,7 @@ public class LuckyThirdteen extends CardGame {
                     continue;
                 }
                 // Draw a card from the public card pool
-                Card card = getCardFromList(pack.getCardList(), initialCard);
+                Card card = CardManager.getCardFromList(pack.getCardList(), initialCard);
                 if (card != null) {
                     card.removeFromHand(true);
                     // Insert into the public area
@@ -206,7 +155,7 @@ public class LuckyThirdteen extends CardGame {
         for (int j = 0; j < cardsToShare; j++) {
             if (pack.isEmpty()) return;
             // Randomly draw a card from the public card pool
-            Card dealt = randomCard(pack.getCardList());
+            Card dealt = CardManager.randomCard(pack.getCardList());
             dealt.removeFromHand(true);
             // Insert into the public area
             playingArea.insert(dealt, true);
@@ -224,7 +173,7 @@ public class LuckyThirdteen extends CardGame {
                 if (initialCard.length() <= 1) {
                     continue;
                 }
-                Card card = getCardFromList(pack.getCardList(), initialCard);
+                Card card = CardManager.getCardFromList(pack.getCardList(), initialCard);
                 if (card != null) {
                     card.removeFromHand(false);
                     players[i].getHand().insert(card, false);
@@ -236,7 +185,7 @@ public class LuckyThirdteen extends CardGame {
             int cardsToDealt = nbCardsPerPlayer - players[i].getHand().getNumberOfCards();
             for (int j = 0; j < cardsToDealt; j++) {
                 if (pack.isEmpty()) return;
-                Card dealt = randomCard(pack.getCardList());
+                Card dealt = CardManager.randomCard(pack.getCardList());
                 dealt.removeFromHand(false);
                 players[i].getHand().insert(dealt, false);
             }
@@ -246,7 +195,7 @@ public class LuckyThirdteen extends CardGame {
     // Implement card drawing logic, moving cards from the public pool to the player's hand
     private void dealACardToHand(Hand hand) {
         if (pack.isEmpty()) return;
-        Card dealt = randomCard(pack.getCardList());
+        Card dealt = CardManager.randomCard(pack.getCardList());
         dealt.removeFromHand(false);
         hand.insert(dealt, true);
     }
@@ -290,12 +239,6 @@ public class LuckyThirdteen extends CardGame {
                 winners.stream().map(String::valueOf).collect(Collectors.toList())));
     }
 
-    public Card getRandomCard(Hand hand) {
-
-        int x = random.nextInt(hand.getCardList().size());
-        return hand.getCardList().get(x);
-    }
-
     private void playGame() {
         // End trump suit
         int winner = 0;
@@ -334,7 +277,7 @@ public class LuckyThirdteen extends CardGame {
                     if (selected != null) {
                         selected.removeFromHand(true);
                     } else {
-                        selected = getRandomCard(players[nextPlayer].getHand());
+                        selected = CardManager.getRandomCard(players[nextPlayer].getHand());
                         selected.removeFromHand(true);
                     }
                 } else {

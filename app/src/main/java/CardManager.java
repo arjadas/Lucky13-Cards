@@ -10,13 +10,8 @@ import java.util.stream.Collectors;
 public class CardManager {
 
     public static final int seed = 30008;
-    static final Random random = new Random(seed);
-
+    private static final Random random = new Random(seed);
     private static StringBuilder logResult = new StringBuilder();
-
-
-
-
 
     // return random Card from ArrayList
     public static Card randomCard(ArrayList<Card> list) {
@@ -25,7 +20,6 @@ public class CardManager {
     }
 
     public static Card getRandomCard(Hand hand) {
-
         int x = random.nextInt(hand.getCardList().size());
         return hand.getCardList().get(x);
     }
@@ -39,11 +33,8 @@ public class CardManager {
                 return card;
             }
         }
-
         return null;
     }
-
-
 
     private static Rank getRankFromString(String cardName) {
         String rankString = cardName.substring(0, cardName.length() - 1);
