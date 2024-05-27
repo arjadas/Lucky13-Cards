@@ -19,6 +19,7 @@ public class CleverPlayer extends Player {
         return selected;
     }
 
+    // follows rules, is described in more detail in report
     public Card getCleverCard(Hand hand) {
         Algorithm algorithm = new Algorithm(this.getPlayingArea());
 
@@ -35,6 +36,7 @@ public class CleverPlayer extends Player {
         Suit suit2 = (Suit) privateCard2.getSuit();
 
         // Rule 1: Check if the drawn card matches any card in the hand
+        // if values are equal we want to keep the card with greater suit
         if (lastRank.getRankCardValue() == rank1.getRankCardValue()) {
             if (lastSuit.getMultiplicationFactor() > suit1.getMultiplicationFactor()) {
                 return privateCard1;

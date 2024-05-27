@@ -5,10 +5,12 @@ public class Calc13 {
 
     private static final int THIRTEEN_GOAL = 13;
 
+    // checks if we can get 13 from given cards
     public boolean isThirteenCards(Card... cards) {
         return isThirteenFromPossibleValues(cards);
     }
 
+    // checks if we can get 13 from any combination of private and public cards
     public boolean isThirteenMixedCards(List<Card> privateCards, List<Card> publicCards) {
         // Check all combinations of one private and one public card
         for (Card privateCard : privateCards) {
@@ -62,6 +64,8 @@ public class Calc13 {
         }
         return false;
     }
+
+    // gets the possible values of a given card
     private int[] getPossibleValues(Card card) {
         Rank rank = (Rank) card.getRank();
         return rank.getPossibleSumValues();
