@@ -7,10 +7,13 @@ import java.util.Properties;
 
 public class PlayerFactory {
 
-
     private Player[] players = LuckyThirdteen.getPlayers();
 
+    /**
+     * Method which creates players
+     */
     public void createPlayers(Properties properties) {
+
         // create players with their type
         String player0Type = properties.getProperty("players.0");
         String player1Type = properties.getProperty("players.1");
@@ -70,12 +73,15 @@ public class PlayerFactory {
     }
 
 
-    // return player based on specified type
+    /**
+     * Returns player based on specified type
+     */
     private Player getPlayer(String strType, Hand hand,Hand playingArea, int autoIndexHand,
                              List<String> playerAutoMovements){
 
         if(strType.equals("basic")){
             return new BasicPlayer(strType,hand,playingArea,autoIndexHand,playerAutoMovements);
+
         }else if(strType.equals("clever")){
             return new CleverPlayer(strType,hand,playingArea,autoIndexHand,playerAutoMovements);
 

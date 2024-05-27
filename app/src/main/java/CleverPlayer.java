@@ -19,7 +19,9 @@ public class CleverPlayer extends Player {
         return selected;
     }
 
-    // follows rules, is described in more detail in report
+    /**
+     * The algorithm for clever bot, discussed in detail in the report
+     */
     public Card getCleverCard(Hand hand) {
         Algorithm algorithm = new Algorithm(this.getPlayingArea());
 

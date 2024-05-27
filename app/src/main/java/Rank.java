@@ -1,4 +1,5 @@
 public enum Rank {
+
     // Reverse order of rank importance (see rankGreater() below)
     ACE(1, 1, 0, 1),
     KING(13, 13, 10, 11, 12, 13),

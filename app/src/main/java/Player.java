@@ -5,18 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player {
+
     private String strType;
     private Hand hand;
-
     private  int score;
-
     private int autoIndexHand;
-
     private List<String> playerAutoMovements = new ArrayList<>();
-
-
     private Hand playingArea;
-
 
     Player(String strType,Hand hand,Hand playingArea,int autoIndexHand,List<String> playerAutoMovements){
         this.setStrType(strType);
@@ -24,10 +19,11 @@ public abstract class Player {
         this.setAutoIndexHand(autoIndexHand);
         this.setPlayerAutoMovements(playerAutoMovements);
         this.setPlayingArea(playingArea);
-
-
     }
 
+    /*
+        getters and setters
+     */
 
     public String getStrType() {
         return strType;
@@ -77,5 +73,8 @@ public abstract class Player {
         this.playingArea = playingArea;
     }
 
+    /**
+     * Selects the card that needs to be discarded
+     */
     public abstract Card selectRemoveCard();
 }

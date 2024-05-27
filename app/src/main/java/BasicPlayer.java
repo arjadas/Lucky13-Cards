@@ -8,13 +8,16 @@ public class BasicPlayer extends Player{
     BasicPlayer(String strType, Hand hand, Hand playingArea,int autoIndexHand, List<String> playerAutoMovements){
         super(strType,hand, playingArea,autoIndexHand,playerAutoMovements);
     }
+
     @Override
     public Card selectRemoveCard() {
         Card selected = this.getMinCard(this.getHand());
         return selected;
     }
 
-    // Randomly draw a card and return the smallest card (to be discarded)
+    /**
+     * Randomly draws a card and return the smallest card (to be discarded)
+     */
     public Card getMinCard(Hand hand) {
 
         List<Card> cardList=hand.getCardList();
@@ -31,7 +34,6 @@ public class BasicPlayer extends Player{
                     idex=i;
                 }
             }
-
         }
 
         return hand.getCardList().get(idex);

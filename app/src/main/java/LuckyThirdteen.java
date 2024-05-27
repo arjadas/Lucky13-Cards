@@ -38,6 +38,10 @@ public class LuckyThirdteen extends CardGame {
         delayTime = Integer.parseInt(properties.getProperty("delayTime", "50"));
     }
 
+    /*
+        getter methods
+     */
+
     public static int getThinkingTime() {
         return thinkingTime;
     }
@@ -52,7 +56,7 @@ public class LuckyThirdteen extends CardGame {
 
     /**
      * Method which sets up new players with a score of 0
-     */
+     * */
     private void initScore() {
         for (int i = 0; i < cardMap.nbPlayers; i++) {
             players[i].setScore(0);
@@ -62,6 +66,9 @@ public class LuckyThirdteen extends CardGame {
         }
     }
 
+    /**
+     * Method that updates score for each player
+     */
     private void updateScore(int player) {
         //removeActor(scoreActors[player]);
         int displayScore = Math.max(players[player].getScore(), 0);
@@ -70,13 +77,15 @@ public class LuckyThirdteen extends CardGame {
         addActor(scoreActors[player], cardMap.scoreLocations[player]);
     }
 
+    /**
+     * Method which initialises the game environment
+     */
     private void initGame() {
 
         playingArea = new Hand(deck);
         for (int i = 0; i < cardMap.nbPlayers; i++) {
             players[i].setHand(new Hand(deck));
             players[i].setPlayingArea(playingArea);
-
         }
 
         cardManager.dealingOut(players, cardMap.nbPlayers, cardMap.nbStartCards,
@@ -84,10 +93,12 @@ public class LuckyThirdteen extends CardGame {
 
         playingArea.setView(this, new RowLayout(cardMap.trickLocation,
                 (playingArea.getNumberOfCards() + 2) * cardMap.trickWidth));
+
         playingArea.draw();
         for (int i = 0; i < cardMap.nbPlayers; i++) {
             players[i].getHand().sort(Hand.SortType.SUITPRIORITY, false);
         }
+
         // Set up human player for interaction
         CardListener cardListener = new CardAdapter()  // Human Player plays card
         {
@@ -96,6 +107,7 @@ public class LuckyThirdteen extends CardGame {
                 players[0].getHand().setTouchEnabled(false);
             }
         };
+
         players[0].getHand().addCardListener(cardListener);
         // graphics
         RowLayout[] layouts = new RowLayout[cardMap.nbPlayers];
@@ -109,7 +121,9 @@ public class LuckyThirdteen extends CardGame {
         }
     }
 
-    // Draw a card from the public card pool and place it in the hand, selecting the card to be discarded
+    /**
+     * Draws a card from the public card pool and place it in the hand, selecting the card to be discarded
+     */
     private Card applyAutoMovement(Hand hand, String nextMovement) {
         if (pack.isEmpty()) return null;
         String[] cardStrings = nextMovement.split("-");
@@ -132,9 +146,9 @@ public class LuckyThirdteen extends CardGame {
     }
 
     private void playGame() {
-        // End trump suit
-        int winner = 0;
+
         int roundNumber = 1;// Default start from round 1
+
         for (int i = 0; i < cardMap.nbPlayers; i++) updateScore(i);
 
         List<Card> cardsPlayed = new ArrayList<>();
@@ -143,8 +157,10 @@ public class LuckyThirdteen extends CardGame {
         int nextPlayer = 0;
         // Maximum of 4 rounds
         while (roundNumber <= 4) {
+
             selected = null;
             boolean finishedAuto = false;
+
             // Auto play according to config file
             if (isAuto) {
 
@@ -175,6 +191,7 @@ public class LuckyThirdteen extends CardGame {
 
             if (!isAuto || finishedAuto) {
                 if (0 == nextPlayer) {
+
                     players[0].getHand().setTouchEnabled(true);
 
                     setStatus("Player 0 is playing. Please double click on a card to discard");
@@ -186,9 +203,7 @@ public class LuckyThirdteen extends CardGame {
                     selected.removeFromHand(true);
                 } else {
                     setStatusText("Player " + nextPlayer + " thinking...");
-
                     cardManager.randomSelectCard(players[nextPlayer].getHand());
-
                     selected = players[nextPlayer].selectRemoveCard();
                     selected.removeFromHand(true);
                 }
@@ -220,7 +235,9 @@ public class LuckyThirdteen extends CardGame {
         }
     }
 
-    // Program entry point
+    /**
+     * Program entry point
+     */
     public String runApp() {
         setTitle("LuckyThirteen (V" + version + ") Constructed for UofM SWEN30006 with JGameGrid (www.aplu.ch)");
         setStatusText("Initializing...");
@@ -256,7 +273,6 @@ public class LuckyThirdteen extends CardGame {
         refresh();
 
         logInfo.addEndOfGameToLog(winners, players);
-
         return logInfo.getLogResult().toString();
 
     }

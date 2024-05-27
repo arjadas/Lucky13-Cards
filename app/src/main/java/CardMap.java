@@ -27,5 +27,4 @@ public class CardMap {
     public final Location trickLocation = new Location(350, 350);
     public final Location textLocation = new Location(350, 450);
 
-
 }

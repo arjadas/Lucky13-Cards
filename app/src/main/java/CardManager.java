@@ -15,7 +15,9 @@ public class CardManager {
     private Hand pack;
 
 
-    // return random Card from ArrayList
+    /**
+     * Returns random Card from the pack of cards
+     */
     public Card randomCard(ArrayList<Card> list) {
         int x = random.nextInt(list.size());
         return list.get(x);
@@ -59,7 +61,9 @@ public class CardManager {
         return Suit.CLUBS;
     }
 
-    // Implement card drawing logic, moving cards from the public pool to the player's hand
+    /**
+     * Implement card drawing logic, moving cards from the public pool to the player's hand
+     */
     public void dealACardToHand(Hand hand, Hand pack) {
         if (pack.isEmpty()) return;
         Card dealt = randomCard(pack.getCardList());
@@ -67,7 +71,9 @@ public class CardManager {
         hand.insert(dealt, true);
     }
 
-    // Initialize each player's hand with 2 cards and the public area with 2 cards
+    /**
+     * Initialises each player's hand with 2 cards and the public area with 2 cards
+     */
     public void dealingOut(Player[] players, int nbPlayers, int nbCardsPerPlayer, int nbSharedCards,
                            Hand playingArea, Properties properties, Hand pack) {
         // Read public cards from config file
@@ -131,10 +137,12 @@ public class CardManager {
         }
     }
 
-    // Randomly draw a card from the card pool
+    /**
+     * Randomly draws a card from the card pool
+     */
     public void randomSelectCard(Hand hand) {
-        dealACardToHand(hand, pack);
 
+        dealACardToHand(hand, pack);
         delay(LuckyThirdteen.getThinkingTime());
     }
 

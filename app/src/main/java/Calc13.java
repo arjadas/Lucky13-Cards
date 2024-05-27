@@ -5,12 +5,16 @@ public class Calc13 {
 
     private static final int THIRTEEN_GOAL = 13;
 
-    // checks if we can get 13 from given cards
+    /**
+     * Checks if the given cards sums up to 13
+     */
     public boolean isThirteenCards(Card... cards) {
         return isThirteenFromPossibleValues(cards);
     }
 
-    // checks if we can get 13 from any combination of private and public cards
+    /**
+     * Checks if the given cards sums up to 13, from any combination of private and public cards
+     */
     public boolean isThirteenMixedCards(List<Card> privateCards, List<Card> publicCards) {
         // Check all combinations of one private and one public card
         for (Card privateCard : privateCards) {
@@ -41,10 +45,11 @@ public class Calc13 {
         }
         return false;
     }
-    // Checks sum of the possible values of the given cards = 13.
-    // handles cards with multiple possible values（ace 0，1）
-    // use recursive  to check all combinations of the possible values.
-    //if any combination of the possible values of the cards equals 13, false otherwise.
+
+    /**
+     * Checks whether given cards sum up to 13.
+     * handles cards with multiple possible values（i.e., Ace can be 0 or 1）
+     */
     private boolean isThirteenFromPossibleValues(Card... cards) {
         int[][] possibleValues = new int[cards.length][];
         for (int i = 0; i < cards.length; i++) {
@@ -53,6 +58,9 @@ public class Calc13 {
         return checkCombinations(possibleValues, 0, 0);
     }
 
+    /**
+     * Uses recursion to check all combinations of the possible values.
+     */
     private boolean checkCombinations(int[][] possibleValues, int index, int currentSum) {
         if (index == possibleValues.length) {
             return currentSum == THIRTEEN_GOAL;
@@ -65,7 +73,9 @@ public class Calc13 {
         return false;
     }
 
-    // gets the possible values of a given card
+    /**
+     * Gets the possible values of a given card
+     */
     private int[] getPossibleValues(Card card) {
         Rank rank = (Rank) card.getRank();
         return rank.getPossibleSumValues();

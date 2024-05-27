@@ -11,14 +11,18 @@ public class Algorithm {
     private Calc13 calc13;
     private CalcMaxScore calcMaxScore;
 
-    // Initializes algorithm with playing area
+    /**
+     * Initializes algorithm with playing area
+     */
     public Algorithm(Hand playingArea) {
         this.playingArea = playingArea;
         this.calc13 = new Calc13();
         this.calcMaxScore = new CalcMaxScore(playingArea.getCardList(), calc13);
     }
 
-    // Initializes algorithm with playing area and players
+    /**
+     * Initializes algorithm with playing area and players
+     */
     public Algorithm(Player[] players, Hand playingArea) {
         this.players = players;
         this.playingArea = playingArea;
@@ -26,7 +30,9 @@ public class Algorithm {
         this.calcMaxScore = new CalcMaxScore(playingArea.getCardList(), calc13);
     }
 
-    // calculates/updates the scores for each player at end of round
+    /**
+     * calculates/updates the scores for each player at end of round
+     */
     public void calculateScoreEndOfRound() {
         List<Boolean> isThirteenChecks = Arrays.asList(false, false, false, false);
         for (int i = 0; i < players.length; i++) {
@@ -58,7 +64,9 @@ public class Algorithm {
         }
     }
 
-    // check if a player's cards sum up to 13 (private and public cards)
+    /**
+     * Checks if a player's cards sum up to 13 (private and public cards)
+     */
     private boolean isThirteen(int playerIndex) {
         List<Card> privateCards = players[playerIndex].getHand().getCardList();
         List<Card> publicCards = playingArea.getCardList();
